@@ -15,6 +15,16 @@ data = px.data.iris()
 fig = px.scatter(data, x='sepal_width', y='sepal_length',
                  color='species', title='Scatter Plot')
 
+fig2 = px.bar(data, x='sepal_width', y='sepal_length',
+              color='species', title='bar Plot')
+
+nodes = ["Node A", "Node B", "Node C", "Node D"]
+links = [
+    {"source": 0, "target": 1, "value": 20},
+    {"source": 1, "target": 2, "value": 10},
+    {"source": 1, "target": 3, "value": 10},
+]
+aspect_ratio = len(nodes) / (len(links) + 1)
 # Define the layout of the app
 app.layout = html.Div(
     children=[
@@ -27,6 +37,33 @@ app.layout = html.Div(
                 dcc.Graph(
                     id='example-graph',
                     figure=fig
+                ),
+                dcc.Graph(
+                    id='example-graph2',
+                    figure=fig2
+                ),
+                dcc.Graph(
+                    id='sankey-chart',
+                    figure={
+                        'data': [go.Sankey(
+                            node=dict(
+                                pad=15,
+                                thickness=20,
+                                line=dict(color='black', width=0.5),
+                                label=nodes
+                            ),
+                            link=dict(
+                                source=[link['source'] for link in links],
+                                target=[link['target'] for link in links],
+                                value=[link['value'] for link in links]
+                            )
+                        )],
+                        'layout': go.Layout(
+                            title='Square Sankey Chart',
+                            # aspectratio=dict(x=1, y=aspect_ratio),
+                            autosize=False
+                        )
+                    }
                 ),
                 dbc.Button('Add to pptx', id='add_btn'),
                 html.Div(id='output')
